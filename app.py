@@ -6,6 +6,9 @@ import os
 from fastapi.staticfiles import StaticFiles
 import mysql.connector
 from dotenv import load_dotenv
+import uuid
+from PIL import Image
+import mimetypes
 
 # Load environment variables from .env file
 load_dotenv()
@@ -18,6 +21,7 @@ S3_BUCKET = os.getenv('S3_BUCKET')
 S3_REGION = os.getenv('S3_REGION')
 S3_KEY = os.getenv('S3_KEY')
 S3_SECRET = os.getenv('S3_SECRET')
+CLOUDFRONT_DOMAIN = os.getenv('CLOUDFRONT_DOMAIN')
 
 s3 = boto3.client(
     's3',
@@ -55,12 +59,27 @@ async def upload_file(caption: str = Form(...), image: UploadFile = File(...)):
         file.write(content)
 
     try:
+        # Resize the image
+        with Image.open(file_location) as img:
+            img.thumbnail((1080, 1920), Image.LANCZOS)
+            img.save(file_location)
+
+        # Generate a unique file name
+        unique_filename = f"{uuid.uuid4()}_{image.filename}"
+
+        # Determine the content type
+        content_type, _ = mimetypes.guess_type(file_location)
+
+        # Upload to S3 with the correct content type
         s3.upload_file(
             file_location,
             S3_BUCKET,
-            filename,
+            unique_filename,
+            ExtraArgs={"ContentType": content_type}
         )
-        image_url = f"https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/{filename}"
+
+        # Construct the CloudFront URL
+        image_url = f"https://{CLOUDFRONT_DOMAIN}/{unique_filename}"
 
         # Save the message and image URL to the database
         connection = mysql.connector.connect(
