@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lease Furniture</title>
+        <link rel="stylesheet" type="text/css" href="/static/index.css">
+    </head>    
+    <body>
+        <!--upload message and image-->
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <div>發表一篇圖文</div>
+
+            <div>
+                <label>文字內容</label>
+                <input type="text" name="caption" placeholder="選擇一張圖片後送出" required/>
+            </div>
+
+            <div>
+                <label>圖片檔案</label>
+                <input type="file" name="image" accept="image/*"/>
+            </div>
+
+            <button type="submit">送出</button>
+        </form>
+        
+        <div class="seperator"></div>
+
+        <!--show message and image-->
+        <div id="contents">
+
+        </div>
+
+
+        <script src="/static/index.js"></script>
+    </body>    
+</html>

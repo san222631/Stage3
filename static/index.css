@@ -1,0 +1,10 @@
+.seperator {
+    height: 1px;
+    background-color: #E8E8E8;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+.each-image {
+    height: 100px;
+    width: 100px;
+}
