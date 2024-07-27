@@ -1,0 +1,10 @@
+version: '3.8'  # Define the version of the Docker Compose file format
+
+services:
+  web:  # Name of the service
+    build: .  # Specify the build context (current directory)
+    ports:
+      - "8000:8000"  # Map port 8000 on the host to port 8000 in the container
+    env_file:
+      - .env  # Specify the .env file to use for environment variables
+    command: ["sh", "-c", "${UVICORN_CMD:-uvicorn app:app --host 0.0.0.0 --port 8000}"]  # Define the command to run
